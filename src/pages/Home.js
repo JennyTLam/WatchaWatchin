@@ -19,7 +19,7 @@ const Home = () => {
 
             <Link to="/Poster">
                 <button variant="outlined">
-                    Sign up
+                    Marc's work
                 </button>
             </Link>
         </header>

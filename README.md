@@ -1,3 +1,8 @@
+# Marc's Notes 
+When I run npm init react-app my-app, I'm not sure how to get the files in my-app to match the current files in the directory. \
+So, I copy and paste over all the files in the directory into my-app and replace all of them. \ 
+In order for me to get it to work, I also had to do a npm install in my-app before I do npm start. 
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
