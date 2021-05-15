@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import {
-  Container,
-} from "@material-ui/core/";
+import { Container } from "@material-ui/core/";
 import SearchBar from "../SearchBar";
+import env from "react-dotenv";
 import Results from "../Results";
 import Discover from "../discover/Discover";
 
-const baseURL = "http://www.omdbapi.com/?apikey=29d3c0e8";
+const baseURL = `http://www.omdbapi.com/?apikey=${env.API_KEY}`;
 
 function Home() {
   const [query, setQuery] = useState("");
@@ -80,9 +79,7 @@ function Home() {
 
       {query ? <Results results={displayed} query={query} /> : <Discover />}
     </Container>
-      
   );
 }
 
 export default Home;
-

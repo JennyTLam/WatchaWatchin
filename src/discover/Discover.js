@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import env from "react-dotenv";
 import data from "./data.json";
 import MoviePoster from "./MoviePoster";
 const axios = require("axios");
@@ -10,7 +11,7 @@ const Discover = () => {
   useEffect(() => {
     data["best-pictures"].forEach((id) => {
       axios
-        .get(`https://omdbapi.com/?i=${id}&apikey=44910e56`)
+        .get(`https://omdbapi.com/?i=${id}&apikey=${env.API_KEY}`)
         .then((result) => {
           setMovies((movies) => [...movies, result.data]);
         });
