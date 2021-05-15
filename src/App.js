@@ -14,7 +14,6 @@ function App() {
   const [year, setYear] = useState(''); 
   const [type, setType] = useState(''); 
   const [genre, setGenre] = useState('ALL'); 
-  const [results, setResults] = useState([]); 
   const [displayed, setDisplayed] = useState([]); 
 
 
@@ -24,33 +23,27 @@ function App() {
       url += `&s=${query}`;
     }
 
-    if (year !== ''){
+    if (year !== 'ALL'){
       url += `&y=${year}`;
     }
 
-    if (type !== ''){
+    if (type !== 'ALL'){
       url += `&type=${type}`; 
     }
 
     if(query !== ''){
       let titles = []
+      console.log(url)
       fetch(url)
       .then(response => response.json())
       .then(data => {
+        console.log(data)
         let getTitlesById = []; 
         if(data && data["Search"]){
-          setResults(data["Search"]); 
-          getTitlesById = results.map(r => r.imdbID)
+          getTitlesById = data["Search"].map(r => r.imdbID)
         }
-        else{
-          setResults([]);
-          setDisplayed([]);
-        }
-        return getTitlesById
-      })
-      .then(ids => {
 
-        ids.forEach((id, idx) => {
+        getTitlesById.forEach((id, idx) => {
           fetch(baseURL + `&i=${id}`)
             .then(response => response.json())
             .then(result => {
@@ -64,7 +57,7 @@ function App() {
                 }
               }
 
-              if (idx === ids.length-1){
+              if (idx === getTitlesById.length-1){
                 setDisplayed(titles);
               }
             })
@@ -72,7 +65,6 @@ function App() {
       })
     }
     else{
-      setResults([]); 
       setDisplayed([]);
     }
  
@@ -81,7 +73,7 @@ function App() {
   return (
     <Container>
       <SearchBar query={query} setQuery={setQuery} year={year} setYear={setYear} type={type} setType={setType} genre={genre} setGenre={setGenre}/>
-      <Results results={displayed} />
+      <Results results={displayed} query={query} />
     </Container>
   );
 }

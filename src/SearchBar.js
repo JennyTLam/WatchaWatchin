@@ -21,40 +21,40 @@ const SearchBar = ({query, setQuery, year, setYear, type, setType, genre, setGen
   const classes = useStyles();
 
 
-  //console.log("query:", query); 
-  //console.log('year:', year);
-  //console.log('type:', type); 
+  console.log("query:", query); 
+  console.log('year:', year);
+  console.log('type:', type); 
+  console.log('genre:', genre)
 
-  const handleChangeTitle = (e) => {
-    setQuery(e.target.value);
-  };
-
-  const handleChangeYear = (e) => {
-    setYear(e.target.value);
-  };
-
-  const handleChangeType = (e) => {
-    setType(e.target.value);
-  };
-
-  const handleChangeGenre = (e) => {
-    setGenre(e.target.value);
-  };
+  const thisYear = (new Date()).getFullYear();
+  const years = Array.from(new Array(200),( val, index) => thisYear - index);
 
   return(
     <Container className={classes.bar}>
       <form className={classes.root} noValidate autoComplete="off">
-        <TextField label="Title" variant="outlined" value={query} onChange={handleChangeTitle}/>
-        <TextField label="Year of Release" variant="outlined" value={year} onChange={handleChangeYear}/>
+        <TextField label="Title" variant="outlined" value={query} onChange={(e) => {setQuery(e.target.value)}}/>
+        <FormControl variant="outlined" className={classes.formControl}>
+              <InputLabel>Year of Release</InputLabel>
+              <Select
+                labelId="demo-simple-select-outlined-label"
+                value={year}
+                onChange={(e) => {setYear(e.target.value)}}
+                label="Year"
+              >
+                <MenuItem value={'ALL'}>All</MenuItem>
+                {years.map(y => <MenuItem value={y}>{y}</MenuItem>)}
+
+              </Select>
+        </FormControl>        
         <FormControl variant="outlined" className={classes.formControl}>
               <InputLabel>Type</InputLabel>
               <Select
                 labelId="demo-simple-select-outlined-label"
                 value={type}
-                onChange={handleChangeType}
+                onChange={(e) => {setType(e.target.value)}}
                 label="Type"
               >
-                <MenuItem value={''}>All</MenuItem>
+                <MenuItem value={'ALL'}>All</MenuItem>
                 <MenuItem value={'movie'}>Movie</MenuItem>
                 <MenuItem value={'series'}>Series</MenuItem>
                 <MenuItem value={'episode'}>Episode</MenuItem>
@@ -65,7 +65,7 @@ const SearchBar = ({query, setQuery, year, setYear, type, setType, genre, setGen
               <Select
                 labelId="demo-simple-select-outlined-label"
                 value={genre}
-                onChange={handleChangeGenre}
+                onChange={(e) => {setGenre(e.target.value)}}
                 label="Genre"
               >
                 <MenuItem value={'ALL'}>All</MenuItem>

@@ -8,15 +8,12 @@ const useStyles = makeStyles((theme) => ({
     }
   }));
 
-const Results = ({results}) => {
+const Results = ({results, query}) => {
     const classes = useStyles();
-    console.log("hall")
-    console.log(results)
-
     return (
         <Container>
-            <p>{results.length === 0 ? "No results, please modify search." : null }</p>
-            {results.map(r => <div key={r["imdbID"]} className={classes.card}><p>{r["Title"]}</p><p>{r["Genre"]}</p></div>)}
+            <p>{results.length === 0 && query !== ''? "No results, please modify search." : null }</p>
+            {results.map(r => <div key={r["imdbID"]} className={classes.card}><p>{r["Title"]}({r["Year"]})</p><p>{r["Genre"]}</p><p>{r["Type"]}</p></div>)}
         </Container>
     )
 }
