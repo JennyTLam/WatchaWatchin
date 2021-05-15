@@ -15,6 +15,7 @@ import Results from "./Results";
 import Discover from "./discover/Discover";
 
 const baseURL = "http://www.omdbapi.com/?apikey=29d3c0e8";
+import Main from './pages/Main';
 
 function App() {
   const [query, setQuery] = useState("");
@@ -87,8 +88,11 @@ function App() {
       />
 
       {query ? <Results results={displayed} query={query} /> : <Discover />}
+      <Main />
     </Container>
+      
   );
 }
 
 export default App;
+
