@@ -1,66 +1,34 @@
 import { Grid, Image } from 'semantic-ui-react'
-import React from "react";
+import React, { useEffect, useState } from "react";
 import env from "react-dotenv";
 import 'semantic-ui-css/semantic.min.css';
+import { useParams } from 'react-router-dom'
 
-class Poster extends React.Component { 
-    constructor(props) {
-        super(props);
-        this.state = {cont: null};
-    }
+const Poster = () => { 
+    const sizes = [4, 8, 4]
+    var count = -1
+    let {movieID} = useParams();
+    const [content, setContent] = useState({})
 
-    componentDidMount() {
-        this.renderPoster();
-    }
-
-    renderPoster = async () => { 
-        try {
-            var res = await fetch(`http://www.omdbapi.com/?i=tt3896198&apikey=${env.API_KEY}`, 
+    useEffect(() => { 
+        fetch(`http://www.omdbapi.com/?i=${movieID}&apikey=${env.API_KEY}`, 
                                     {method: 'GET', 
                                      mode: 'cors'})
-                                .then(result => result.json());
-            
-            this.setState({
-                cont: res
-            });
-            console.log(res)
-            console.log(this.state)
-        } catch (err) {
-          console.log(err);
-        }
-    }
-    
-    render = () => {
-        const sizes = [4, 8, 4]
-        const call = [this.makeImage, this.makeInformation, this.makeInteraction]
-        var count = -1
-        
-        return (
-            <header className="App-header">
-                <Grid>
-                    {sizes.map((s, i) => {
-                        count++; 
-                        return <Grid.Column width={s} key={count}> 
-                            {call[i]()}
-                        </Grid.Column>
-                    })}
-                </Grid>
-            </header>
-        );
-    }
+                                .then(result => result.json())
+                                .then(result => setContent(result));
+    }, [content])
 
-    makeImage = () => {
+    const makeImage = () => {
         var path = ""
-        if (this.state.cont != null) {
-            path = `${this.state.cont["Poster"]}`
+        if (content != null) {
+            path = `${content["Poster"]}`
         }
         return ( 
             <Image src={path} alt="Movie poster"></Image>
         );
     } 
-
-    makeInformation = () => {
-        var content = this.state.cont
+    
+    const makeInformation = () => {
         if (content == null) { 
             return
         }
@@ -71,7 +39,7 @@ class Poster extends React.Component {
         const plot = <p>{content["Plot"]}</p>
         const awards = <p>{content["Awards"]}</p>
         const ratings = <ul> 
-                            {this.state.cont["Ratings"].map(o => <li>{o.Source}: {o.Value}</li>)}
+                            {content["Ratings"] ? content["Ratings"].map(o => <li>{o.Source}: {o.Value}</li>) : null}
                         </ul>
         return (
             <div>
@@ -85,8 +53,8 @@ class Poster extends React.Component {
             
         )
     } 
-
-    makeInteraction = () => {
+    
+    const makeInteraction = () => {
         return ( 
             <div>
                 <p><button>Watch on Disney+</button></p>
@@ -94,6 +62,21 @@ class Poster extends React.Component {
             </div>
         )
     }
+
+    const call = [makeImage, makeInformation, makeInteraction]
+    
+    return (
+        <header className="App-header">
+            <Grid>
+                {sizes.map((s, i) => {
+                    count++; 
+                    return <Grid.Column width={s} key={count}> 
+                        {call[i]()}
+                    </Grid.Column>
+                })}
+            </Grid>
+        </header>
+    );
 
 }
 

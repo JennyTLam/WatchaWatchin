@@ -1,17 +1,18 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import { Link } from 'react-router-dom';
 
 const MoviePoster = ({ data }) => {
   const classes = useStyles();
   return (
-    <div className={classes.movieCard}>
-      <img
-        className={classes.posterImage}
-        src={data["Poster"]}
-        alt={data["Title"] + "poster"}
-      />
-      <p className={classes.title}>{data["Title"]}</p>
-    </div>
+    <Link to={`/Poster/${data.imdbID}`} className={classes.movieCard}>
+        <img
+          className={classes.posterImage}
+          src={data["Poster"]}
+          alt={data["Title"] + "poster"}
+        />
+        <p className={classes.title}>{data["Title"]}</p>
+    </Link>
   );
 };
 
