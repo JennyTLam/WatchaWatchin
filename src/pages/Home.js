@@ -5,7 +5,10 @@ import env from "react-dotenv";
 import Results from "../Results";
 import Discover from "../discover/Discover";
 
-const baseURL = `http://www.omdbapi.com/?apikey=${env.API_KEY}`;
+var baseURL = "" 
+if (env != null) { 
+  baseURL = `http://www.omdbapi.com/?apikey=${env.API_KEY}`;
+}
 
 function Home() {
   const [query, setQuery] = useState("");

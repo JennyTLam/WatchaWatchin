@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import env from "react-dotenv";
 import 'semantic-ui-css/semantic.min.css';
 import { useParams } from 'react-router-dom'
+import Navbar from './Navbar'
 
 const Poster = () => { 
     const sizes = [4, 8, 4]
@@ -53,12 +54,16 @@ const Poster = () => {
             
         )
     } 
+
+    // Link this up to DB
+    const addToWatchlist = () => {}
     
     const makeInteraction = () => {
         return ( 
             <div>
                 <p><button>Watch on Disney+</button></p>
-                <p><button>Add to Watchlist</button></p>
+                <p><button onClick={addToWatchlist}>Add to Watchlist</button></p>
+                <p><button>Add to Favorites</button></p>
             </div>
         )
     }
@@ -67,6 +72,8 @@ const Poster = () => {
     
     return (
         <header className="App-header">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
+            <Navbar></Navbar>
             <Grid>
                 {sizes.map((s, i) => {
                     count++; 
