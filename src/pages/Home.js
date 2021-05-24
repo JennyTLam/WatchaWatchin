@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Container} from "@material-ui/core/";
-import { makeStyles } from '@material-ui/core/styles';
+import { Container } from "@material-ui/core/";
+import { makeStyles } from "@material-ui/core/styles";
 import SearchBar from "../SearchBar";
 import env from "react-dotenv";
 import Results from "../Results";
 import Discover from "../discover/Discover";
 
-var baseURL = "" 
-if (env != null) { 
+var baseURL = "";
+if (env != null) {
   baseURL = `http://www.omdbapi.com/?apikey=${env.API_KEY}`;
 }
 
@@ -17,6 +17,8 @@ function Home() {
   const [type, setType] = useState("");
   const [genre, setGenre] = useState("ALL");
   const [displayed, setDisplayed] = useState([]);
+  const [homePage, setHomePage] = useState(1);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
     let url = baseURL;
@@ -33,6 +35,7 @@ function Home() {
     }
 
     if (query !== "") {
+      url += `&page=${homePage}`;
       let titles = [];
       console.log(url);
       fetch(url)
@@ -42,6 +45,7 @@ function Home() {
           let getTitlesById = [];
           if (data && data["Search"]) {
             getTitlesById = data["Search"].map((r) => r.imdbID);
+            setTotal(data["totalResults"]);
           }
 
           getTitlesById.forEach((id, idx) => {
@@ -66,7 +70,7 @@ function Home() {
     } else {
       setDisplayed([]);
     }
-  }, [query, year, type, genre]);
+  }, [query, year, type, genre, homePage]);
 
   return (
     <Container>
@@ -81,7 +85,17 @@ function Home() {
         setGenre={setGenre}
       />
 
-      {query ? <Results results={displayed} query={query} /> : <Discover />}
+      {query ? (
+        <Results
+          results={displayed}
+          query={query}
+          homePage={homePage}
+          setHomePage={setHomePage}
+          total={total}
+        />
+      ) : (
+        <Discover />
+      )}
     </Container>
   );
 }
