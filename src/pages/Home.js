@@ -5,10 +5,12 @@ import SearchBar from "../SearchBar";
 import env from "react-dotenv";
 import Results from "../Results";
 import Discover from "../discover/Discover";
+const functions = require('firebase-functions');
+
 
 var baseURL = "" 
 if (env != null) { 
-  baseURL = `http://www.omdbapi.com/?apikey=${env.API_KEY}`;
+  baseURL = `http://www.omdbapi.com/?apikey=${functions.config().watchawatchin.apikey}`;
 }
 
 function Home() {
