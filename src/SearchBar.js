@@ -42,7 +42,7 @@ const SearchBar = ({query, setQuery, year, setYear, type, setType, genre, setGen
                 label="Year"
               >
                 <MenuItem value={'ALL'}>All</MenuItem>
-                {years.map(y => <MenuItem value={y}>{y}</MenuItem>)}
+                {years.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
 
               </Select>
         </FormControl>        

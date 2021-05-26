@@ -3,17 +3,16 @@ import { makeStyles } from "@material-ui/core/styles";
 import env from "react-dotenv";
 import data from "./data.json";
 import MoviePoster from "./MoviePoster";
-const axios = require("axios");
 
 const Discover = () => {
   const classes = useStyles();
   const [movies, setMovies] = useState([]);
   useEffect(() => {
     data["best-pictures"].forEach((id) => {
-      axios
-        .get(`https://omdbapi.com/?i=${id}&apikey=${env.API_KEY}`)
-        .then((result) => {
-          setMovies((movies) => [...movies, result.data]);
+      fetch(`https://omdbapi.com/?i=${id}&apikey=44910e56`)
+        .then(response => response.json())
+        .then(result => {
+          setMovies((movies) => [...movies, result]);
         });
     });
   }, []);

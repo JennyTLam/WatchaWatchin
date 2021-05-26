@@ -4,7 +4,7 @@ import Home from './pages/Home';
 import Poster from './pages/Poster'
 import User from './pages/User'
 import { Switch, Route } from 'react-router-dom';
-import { Container, AppBar, Toolbar, IconButton, Typography, Button } from "@material-ui/core/";
+import { AppBar, Toolbar, IconButton, Typography, Button } from "@material-ui/core/";
 import MenuIcon from '@material-ui/icons/Menu';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -103,7 +103,7 @@ function App() {
           <Typography variant="h6" className={classes.title}>
             Welcome, {user.displayName}
           </Typography>
-          <Button primary onClick={() => firebase.auth().signOut()}>
+          <Button onClick={() => firebase.auth().signOut()}>
             Log out
           </Button>    
           </Toolbar>

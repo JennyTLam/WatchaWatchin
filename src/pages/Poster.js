@@ -12,7 +12,7 @@ const Poster = () => {
     const [content, setContent] = useState({})
 
     useEffect(() => { 
-        fetch(`http://www.omdbapi.com/?i=${movieID}&apikey=${env.API_KEY}`, 
+        fetch(`https://www.omdbapi.com/?i=${movieID}&apikey=44910e56`, 
                                     {method: 'GET', 
                                      mode: 'cors'})
                                 .then(result => result.json())

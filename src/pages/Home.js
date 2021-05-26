@@ -1,22 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { Container} from "@material-ui/core/";
-import { makeStyles } from '@material-ui/core/styles';
 import SearchBar from "../SearchBar";
 import env from "react-dotenv";
 import Results from "../Results";
 import Discover from "../discover/Discover";
-const functions = require('firebase-functions');
 
 
 var baseURL = "" 
 if (env != null) { 
-  baseURL = `http://www.omdbapi.com/?apikey=${functions.config().watchawatchin.apikey}`;
+  baseURL = `https://www.omdbapi.com/?apikey=44910e56`;
 }
 
 function Home() {
   const [query, setQuery] = useState("");
-  const [year, setYear] = useState("");
-  const [type, setType] = useState("");
+  const [year, setYear] = useState("ALL");
+  const [type, setType] = useState("ALL");
   const [genre, setGenre] = useState("ALL");
   const [displayed, setDisplayed] = useState([]);
 
