@@ -5,11 +5,16 @@ import 'semantic-ui-css/semantic.min.css';
 import { useParams } from 'react-router-dom'
 import Navbar from './Navbar'
 
-const Poster = () => { 
+import firebase from '../firebase/firebase';
+import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
+
+const Poster = (props) => { 
     const sizes = [4, 8, 4]
     var count = -1
     let {movieID} = useParams();
     const [content, setContent] = useState({})
+
+    const db = firebase.database().ref(`users/${props.uid}/movies`);
 
     useEffect(() => { 
         fetch(`https://www.omdbapi.com/?i=${movieID}&apikey=44910e56`, 
@@ -55,8 +60,16 @@ const Poster = () => {
         )
     } 
 
+    // Create a new post reference with an auto-generated id
+
+
     // Link this up to DB
-    const addToWatchlist = () => {}
+    const addToWatchlist = () => { 
+        var newPostRef = db.push();
+        newPostRef.set({
+            "id": movieID
+        });
+    }
     
     const makeInteraction = () => {
         return ( 

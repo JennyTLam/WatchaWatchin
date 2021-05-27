@@ -3,7 +3,7 @@ import React, {useState, useEffect} from "react";
 import Home from './pages/Home';
 import Poster from './pages/Poster'
 import User from './pages/User'
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Link } from 'react-router-dom';
 import { AppBar, Toolbar, IconButton, Typography, Button } from "@material-ui/core/";
 import MenuIcon from '@material-ui/icons/Menu';
 import { makeStyles } from '@material-ui/core/styles';
@@ -91,9 +91,9 @@ function App() {
   };
 
   const NavBar = ({ user }) => (
-    <React.Fragment>
-      { user ? <Welcome user={ user } /> : <SignIn /> }
-    </React.Fragment>
+      <React.Fragment>
+        { user ? <Link to={`/Profile/${user.uid}`}><Welcome user={user}/></Link> : <SignIn /> }
+      </React.Fragment>
   );
 
   const Welcome = ({ user }) => {
@@ -116,7 +116,7 @@ function App() {
     <NavBar user={user} />
     <Switch> 
       <Route exact path='/' component={Home}></Route>
-      <Route path='/Poster/:movieID' component={Poster}></Route>
+      <Route path='/Poster/:movieID' component={() => <Poster uid={user ? user.uid : user}></Poster>}></Route>
       <Route path='/Profile/:personID' component={User}></Route>
     </Switch>
     </React.Fragment>

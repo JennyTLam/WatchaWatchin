@@ -4,6 +4,8 @@ import env from "react-dotenv";
 import 'semantic-ui-css/semantic.min.css';
 import { useParams } from 'react-router-dom'
 import { makeStyles } from "@material-ui/core"; 
+import firebase from '../firebase/firebase';
+import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
 const User = () => { 
     const watched = [{
@@ -124,129 +126,148 @@ const User = () => {
         "Website": "N/A",
         "Response": "True"
     }] 
-    const future = [{
-        "Title": "Star Wars: Episode VII - The Force Awakens",
-        "Year": "2015",
-        "Rated": "PG-13",
-        "Released": "18 Dec 2015",
-        "Runtime": "138 min",
-        "Genre": "Action, Adventure, Sci-Fi",
-        "Director": "J.J. Abrams",
-        "Writer": "Lawrence Kasdan, J.J. Abrams, Michael Arndt, George Lucas (based on characters created by)",
-        "Actors": "Harrison Ford, Mark Hamill, Carrie Fisher, Adam Driver",
-        "Plot": "As a new threat to the galaxy rises, Rey, a desert scavenger, and Finn, an ex-stormtrooper, must join Han Solo and Chewbacca to search for the one hope of restoring peace.",
-        "Language": "English",
-        "Country": "USA",
-        "Awards": "Nominated for 5 Oscars. Another 62 wins & 131 nominations.",
-        "Poster": "https://m.media-amazon.com/images/M/MV5BOTAzODEzNDAzMl5BMl5BanBnXkFtZTgwMDU1MTgzNzE@._V1_SX300.jpg",
-        "Ratings": [
-            {
-                "Source": "Internet Movie Database",
-                "Value": "7.9/10"
-            },
-            {
-                "Source": "Rotten Tomatoes",
-                "Value": "93%"
-            },
-            {
-                "Source": "Metacritic",
-                "Value": "80/100"
-            }
-        ],
-        "Metascore": "80",
-        "imdbRating": "7.9",
-        "imdbVotes": "868,284",
-        "imdbID": "tt2488496",
-        "Type": "movie",
-        "DVD": "01 Apr 2016",
-        "BoxOffice": "$936,662,225",
-        "Production": "Lucasfilm Ltd., Bad Robot",
-        "Website": "N/A",
-        "Response": "True"
-    }, {
-        "Title": "Star Wars: Episode I - The Phantom Menace",
-        "Year": "1999",
-        "Rated": "PG",
-        "Released": "19 May 1999",
-        "Runtime": "136 min",
-        "Genre": "Action, Adventure, Fantasy, Sci-Fi",
-        "Director": "George Lucas",
-        "Writer": "George Lucas",
-        "Actors": "Liam Neeson, Ewan McGregor, Natalie Portman, Jake Lloyd",
-        "Plot": "Two Jedi escape a hostile blockade to find allies and come across a young boy who may bring balance to the Force, but the long dormant Sith resurface to claim their original glory.",
-        "Language": "English, Sanskrit",
-        "Country": "USA",
-        "Awards": "Nominated for 3 Oscars. Another 26 wins & 66 nominations.",
-        "Poster": "https://m.media-amazon.com/images/M/MV5BYTRhNjcwNWQtMGJmMi00NmQyLWE2YzItODVmMTdjNWI0ZDA2XkEyXkFqcGdeQXVyNTAyODkwOQ@@._V1_SX300.jpg",
-        "Ratings": [
-            {
-                "Source": "Internet Movie Database",
-                "Value": "6.5/10"
-            },
-            {
-                "Source": "Rotten Tomatoes",
-                "Value": "52%"
-            },
-            {
-                "Source": "Metacritic",
-                "Value": "51/100"
-            }
-        ],
-        "Metascore": "51",
-        "imdbRating": "6.5",
-        "imdbVotes": "739,673",
-        "imdbID": "tt0120915",
-        "Type": "movie",
-        "DVD": "10 Apr 2015",
-        "BoxOffice": "$474,544,677",
-        "Production": "Lucasfilm Ltd.",
-        "Website": "N/A",
-        "Response": "True"
-    }, {
-        "Title": "Star Wars: Episode III - Revenge of the Sith",
-        "Year": "2005",
-        "Rated": "PG-13",
-        "Released": "19 May 2005",
-        "Runtime": "140 min",
-        "Genre": "Action, Adventure, Fantasy, Sci-Fi",
-        "Director": "George Lucas",
-        "Writer": "George Lucas",
-        "Actors": "Ewan McGregor, Natalie Portman, Hayden Christensen, Ian McDiarmid",
-        "Plot": "Three years into the Clone Wars, the Jedi rescue Palpatine from Count Dooku. As Obi-Wan pursues a new threat, Anakin acts as a double agent between the Jedi Council and Palpatine and is lured into a sinister plan to rule the galaxy.",
-        "Language": "English",
-        "Country": "USA",
-        "Awards": "Nominated for 1 Oscar. Another 26 wins & 62 nominations.",
-        "Poster": "https://m.media-amazon.com/images/M/MV5BNTc4MTc3NTQ5OF5BMl5BanBnXkFtZTcwOTg0NjI4NA@@._V1_SX300.jpg",
-        "Ratings": [
-            {
-                "Source": "Internet Movie Database",
-                "Value": "7.5/10"
-            },
-            {
-                "Source": "Rotten Tomatoes",
-                "Value": "80%"
-            },
-            {
-                "Source": "Metacritic",
-                "Value": "68/100"
-            }
-        ],
-        "Metascore": "68",
-        "imdbRating": "7.5",
-        "imdbVotes": "720,863",
-        "imdbID": "tt0121766",
-        "Type": "movie",
-        "DVD": "10 Apr 2015",
-        "BoxOffice": "$380,270,577",
-        "Production": "Lucasfilm Ltd.",
-        "Website": "N/A",
-        "Response": "True"
-    }]
+    // const future = [{
+    //     "Title": "Star Wars: Episode VII - The Force Awakens",
+    //     "Year": "2015",
+    //     "Rated": "PG-13",
+    //     "Released": "18 Dec 2015",
+    //     "Runtime": "138 min",
+    //     "Genre": "Action, Adventure, Sci-Fi",
+    //     "Director": "J.J. Abrams",
+    //     "Writer": "Lawrence Kasdan, J.J. Abrams, Michael Arndt, George Lucas (based on characters created by)",
+    //     "Actors": "Harrison Ford, Mark Hamill, Carrie Fisher, Adam Driver",
+    //     "Plot": "As a new threat to the galaxy rises, Rey, a desert scavenger, and Finn, an ex-stormtrooper, must join Han Solo and Chewbacca to search for the one hope of restoring peace.",
+    //     "Language": "English",
+    //     "Country": "USA",
+    //     "Awards": "Nominated for 5 Oscars. Another 62 wins & 131 nominations.",
+    //     "Poster": "https://m.media-amazon.com/images/M/MV5BOTAzODEzNDAzMl5BMl5BanBnXkFtZTgwMDU1MTgzNzE@._V1_SX300.jpg",
+    //     "Ratings": [
+    //         {
+    //             "Source": "Internet Movie Database",
+    //             "Value": "7.9/10"
+    //         },
+    //         {
+    //             "Source": "Rotten Tomatoes",
+    //             "Value": "93%"
+    //         },
+    //         {
+    //             "Source": "Metacritic",
+    //             "Value": "80/100"
+    //         }
+    //     ],
+    //     "Metascore": "80",
+    //     "imdbRating": "7.9",
+    //     "imdbVotes": "868,284",
+    //     "imdbID": "tt2488496",
+    //     "Type": "movie",
+    //     "DVD": "01 Apr 2016",
+    //     "BoxOffice": "$936,662,225",
+    //     "Production": "Lucasfilm Ltd., Bad Robot",
+    //     "Website": "N/A",
+    //     "Response": "True"
+    // }, {
+    //     "Title": "Star Wars: Episode I - The Phantom Menace",
+    //     "Year": "1999",
+    //     "Rated": "PG",
+    //     "Released": "19 May 1999",
+    //     "Runtime": "136 min",
+    //     "Genre": "Action, Adventure, Fantasy, Sci-Fi",
+    //     "Director": "George Lucas",
+    //     "Writer": "George Lucas",
+    //     "Actors": "Liam Neeson, Ewan McGregor, Natalie Portman, Jake Lloyd",
+    //     "Plot": "Two Jedi escape a hostile blockade to find allies and come across a young boy who may bring balance to the Force, but the long dormant Sith resurface to claim their original glory.",
+    //     "Language": "English, Sanskrit",
+    //     "Country": "USA",
+    //     "Awards": "Nominated for 3 Oscars. Another 26 wins & 66 nominations.",
+    //     "Poster": "https://m.media-amazon.com/images/M/MV5BYTRhNjcwNWQtMGJmMi00NmQyLWE2YzItODVmMTdjNWI0ZDA2XkEyXkFqcGdeQXVyNTAyODkwOQ@@._V1_SX300.jpg",
+    //     "Ratings": [
+    //         {
+    //             "Source": "Internet Movie Database",
+    //             "Value": "6.5/10"
+    //         },
+    //         {
+    //             "Source": "Rotten Tomatoes",
+    //             "Value": "52%"
+    //         },
+    //         {
+    //             "Source": "Metacritic",
+    //             "Value": "51/100"
+    //         }
+    //     ],
+    //     "Metascore": "51",
+    //     "imdbRating": "6.5",
+    //     "imdbVotes": "739,673",
+    //     "imdbID": "tt0120915",
+    //     "Type": "movie",
+    //     "DVD": "10 Apr 2015",
+    //     "BoxOffice": "$474,544,677",
+    //     "Production": "Lucasfilm Ltd.",
+    //     "Website": "N/A",
+    //     "Response": "True"
+    // }, {
+    //     "Title": "Star Wars: Episode III - Revenge of the Sith",
+    //     "Year": "2005",
+    //     "Rated": "PG-13",
+    //     "Released": "19 May 2005",
+    //     "Runtime": "140 min",
+    //     "Genre": "Action, Adventure, Fantasy, Sci-Fi",
+    //     "Director": "George Lucas",
+    //     "Writer": "George Lucas",
+    //     "Actors": "Ewan McGregor, Natalie Portman, Hayden Christensen, Ian McDiarmid",
+    //     "Plot": "Three years into the Clone Wars, the Jedi rescue Palpatine from Count Dooku. As Obi-Wan pursues a new threat, Anakin acts as a double agent between the Jedi Council and Palpatine and is lured into a sinister plan to rule the galaxy.",
+    //     "Language": "English",
+    //     "Country": "USA",
+    //     "Awards": "Nominated for 1 Oscar. Another 26 wins & 62 nominations.",
+    //     "Poster": "https://m.media-amazon.com/images/M/MV5BNTc4MTc3NTQ5OF5BMl5BanBnXkFtZTcwOTg0NjI4NA@@._V1_SX300.jpg",
+    //     "Ratings": [
+    //         {
+    //             "Source": "Internet Movie Database",
+    //             "Value": "7.5/10"
+    //         },
+    //         {
+    //             "Source": "Rotten Tomatoes",
+    //             "Value": "80%"
+    //         },
+    //         {
+    //             "Source": "Metacritic",
+    //             "Value": "68/100"
+    //         }
+    //     ],
+    //     "Metascore": "68",
+    //     "imdbRating": "7.5",
+    //     "imdbVotes": "720,863",
+    //     "imdbID": "tt0121766",
+    //     "Type": "movie",
+    //     "DVD": "10 Apr 2015",
+    //     "BoxOffice": "$380,270,577",
+    //     "Production": "Lucasfilm Ltd.",
+    //     "Website": "N/A",
+    //     "Response": "True"
+    // }]
 
     let {personID} = useParams();
 
+    const db = firebase.database().ref(`users/${personID}/movies`);
+
     // const [watched, setWatched] = useState([])
-    // const [future, setFuture] = useState([])
+    const [future, setFuture] = useState([])
+
+    db.get()
+        .then(snapshot => { 
+            var keys = Object.keys(snapshot.val())
+            console.log(snapshot)
+            console.log(keys)
+            return keys ? keys.map(keys => snapshot.val()[keys].id) : []
+        })
+        .then(movies => { 
+            console.log(movies) 
+            Promise.all(movies.map(movieID => fetch(`http://www.omdbapi.com/?i=${movieID}&apikey=c77aad00`, 
+                                                                {method: 'GET', mode: 'cors'})
+                                                            .then(result => result.json())))
+                            .then(values => { 
+                                console.log(values) 
+                                setFuture(values)
+                            })});
 
 
     // useEffect(() => { 
