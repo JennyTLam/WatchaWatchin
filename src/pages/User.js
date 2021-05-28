@@ -252,22 +252,22 @@ const User = () => {
     // const [watched, setWatched] = useState([])
     const [future, setFuture] = useState([])
 
-    db.get()
-        .then(snapshot => { 
-            var keys = Object.keys(snapshot.val())
-            console.log(snapshot)
-            console.log(keys)
-            return keys ? keys.map(keys => snapshot.val()[keys].id) : []
-        })
-        .then(movies => { 
-            console.log(movies) 
-            Promise.all(movies.map(movieID => fetch(`http://www.omdbapi.com/?i=${movieID}&apikey=c77aad00`, 
-                                                                {method: 'GET', mode: 'cors'})
-                                                            .then(result => result.json())))
-                            .then(values => { 
-                                console.log(values) 
-                                setFuture(values)
-                            })});
+    useEffect(() => {
+        const getFuture = (snapshot) => { 
+            var keys = snapshot.val() ? Object.keys(snapshot.val()) : null
+            var movies = keys ? keys.map(keys => snapshot.val()[keys].id) : []
+            if (movies.length > 0 || movies.length > future.length) {
+                var promises = movies.map(movieID => fetch(`http://www.omdbapi.com/?i=${movieID}&apikey=c77aad00`, 
+                                                            {method: 'GET', mode: 'cors'})
+                                                        .then(result => result.json()))
+                Promise.all(promises)                                    
+                    .then((values) => setFuture(values))
+            }
+        }
+        db.on('value', getFuture, error => alert(error));
+        return () => { db.off('value', getFuture); };
+    }, [])
+    
 
 
     // useEffect(() => { 
@@ -282,14 +282,7 @@ const User = () => {
     // }, [watched])
 
     // useEffect(() => { 
-    //     Promise.resolve()
-    //         // Replace with Heroku db grab
-    //         .then(() => "Hello World")
-    //         .then(movies => Promise.all(movies.map(movieID =>
-    //                                                     fetch(`http://www.omdbapi.com/?i=${movieID}&apikey=${env.API_KEY}`, 
-    //                                                           {method: 'GET', mode: 'cors'})
-    //                                                      .then(result => result.json())))
-    //                                     .then(values => setFuture(values)));
+        
     // }, [future])
 
     const useStyles = makeStyles({
