@@ -3,7 +3,7 @@ import React, {useState, useEffect} from "react";
 import Home from './pages/Home';
 import Poster from './pages/Poster'
 import User from './pages/User'
-import { Switch, Route, Link } from 'react-router-dom';
+import { Switch, Route, Link, useHistory } from 'react-router-dom';
 import { AppBar, Toolbar, IconButton, Typography, Button } from "@material-ui/core/";
 import MenuIcon from '@material-ui/icons/Menu';
 import { makeStyles } from '@material-ui/core/styles';
@@ -90,18 +90,26 @@ function App() {
     )
   };
 
-  const NavBar = ({ user }) => (
+  const history = useHistory();
+
+  const NavBar = () => {
+    return (
       <React.Fragment>
-        { user ? <Link to={`/Profile/${user.uid}`}><Welcome user={user}/></Link> : <SignIn /> }
+        { user ? <Welcome user={user}/> : <SignIn /> }
       </React.Fragment>
-  );
+    )};
 
   const Welcome = ({ user }) => {
     return(
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
-            Welcome, {user.displayName}
+            <span onClick={() => history.push("/")} style={{marginRight: 5 + "px"}}>
+              Welcome,
+            </span> 
+            <span onClick={() => history.push(`/Profile/${user.uid}`)}> 
+              {user.displayName} 
+            </span>
           </Typography>
           <Button onClick={() => firebase.auth().signOut()}>
             Log out
@@ -117,7 +125,7 @@ function App() {
     <Switch> 
       <Route exact path='/' component={Home}></Route>
       <Route path='/Poster/:movieID' component={() => <Poster uid={user ? user.uid : user}></Poster>}></Route>
-      <Route path='/Profile/:personID' component={User}></Route>
+      <Route path='/Profile/:personID' component={() => <User></User>}></Route>
     </Switch>
     </React.Fragment>
   );

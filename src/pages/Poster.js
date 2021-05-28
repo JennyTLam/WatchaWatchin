@@ -14,7 +14,9 @@ const Poster = (props) => {
     let {movieID} = useParams();
     const [content, setContent] = useState({})
 
-    const db = firebase.database().ref(`users/${props.uid}/movies`);
+    const db = firebase.database().ref(`users/${props.uid}/watchList`);
+    const db1 = firebase.database().ref(`users/${props.uid}/watchHistory`);
+    const db2 = firebase.database().ref(`users/${props.uid}/favorites`);
 
     useEffect(() => { 
         fetch(`https://www.omdbapi.com/?i=${movieID}&apikey=44910e56`, 
@@ -62,21 +64,131 @@ const Poster = (props) => {
 
     // Create a new post reference with an auto-generated id
 
+    const [futureMovies, setFutureMovies] = useState({})
+    const [futureKeys, setFutureKeys] = useState([])
+    const [futureMovieIDs, setFutureMovieIDs] = useState([])
+
+    useEffect(() => {
+        const getFuture = (snapshot) => { 
+            var snapVal = snapshot.val()
+            var futureKeys = snapVal ? Object.keys(snapshot.val()) : []
+            var futureMovieIDs = futureKeys ? futureKeys.map(futureKeys => snapshot.val()[futureKeys].id) : []
+            setFutureMovies(snapVal)
+            setFutureKeys(futureKeys)
+            setFutureMovieIDs(futureMovieIDs)
+        }
+        db.on('value', getFuture, error => alert(error));
+        return () => { db.off('value', getFuture); };
+    }, [])
+
+    const [watchedMovies, setWatchedMovies] = useState({})
+    const [watchedKeys, setWatchedKeys] = useState([])
+    const [watchedMovieIDs, setWatchedMovieIDs] = useState([])
+
+    useEffect(() => {
+        const getWatched = (snapshot) => { 
+            var snapVal = snapshot.val()
+            var watchedKeys = snapVal ? Object.keys(snapshot.val()) : []
+            var watchedMovieIDs = watchedKeys ? watchedKeys.map(watchedKey => snapshot.val()[watchedKey].id) : []
+            setWatchedMovies(snapVal)
+            setWatchedKeys(watchedKeys)
+            setWatchedMovieIDs(watchedMovieIDs)
+        }
+        db1.on('value', getWatched, error => alert(error));
+        return () => { db.off('value', getWatched); };
+    }, [])
+
+    const [toggleFutureName, setToggleFutureName] = useState((futureMovieIDs.includes(movieID)) ? "Remove from Watchlist" : "Add to Watchlist")
+
+    useEffect(() => (futureMovieIDs.includes(movieID)) ? setToggleFutureName("Remove from Watchlist") : setToggleFutureName("Add to Watchlist"))
 
     // Link this up to DB
-    const addToWatchlist = () => { 
-        var newPostRef = db.push();
-        newPostRef.set({
-            "id": movieID
-        });
+    const toggleWatchList = () => { 
+        var idToKey = {}
+        futureMovieIDs.map((val, i) => idToKey[val] = futureKeys[i])
+        if (futureMovieIDs.includes(movieID)) { 
+            delete futureMovies[idToKey[movieID]]
+            var updates = {[`users/${props.uid}/watchList`]: futureMovies}
+            firebase.database().ref().update(updates)
+            setFutureMovies(futureMovies)
+            const index = futureMovieIDs.indexOf(movieID);
+            if (index > -1) {
+                futureMovieIDs.splice(index, 1);
+            }
+            setFutureMovieIDs(futureMovieIDs)
+            setToggleFutureName("Add to Watchlist")
+        } else {
+            var newPostRef = db.push();
+            newPostRef.set({
+                "id": movieID
+            });
+            setToggleFutureName("Remove from Watchlist")
+        }
     }
+
+    const toggleWatchHistory = () => { 
+        // Link this up to DB
+        var idToKey = {}
+        watchedMovieIDs.map((val, i) => idToKey[val] = watchedKeys[i])
+        if (!watchedMovieIDs.includes(movieID)) { 
+            var newPostRef = db1.push();
+            newPostRef.set({
+                "id": movieID
+            });
+        }
+    }
+
+    const [favoriteMovies, setFavoriteMovies] = useState({})
+    const [favoriteKeys, setFavoriteKeys] = useState([])
+    const [favoriteMovieIDs, setFavoriteMovieIDs] = useState([])
+
+    useEffect(() => {
+        const getFavorite = (snapshot) => { 
+            var snapVal = snapshot.val()
+            var favoriteKeys = snapVal ? Object.keys(snapshot.val()) : []
+            var favoriteMovieIDs = favoriteKeys ? favoriteKeys.map(favoriteKey => snapshot.val()[favoriteKey].id) : []
+            setFavoriteMovies(snapVal)
+            setFavoriteKeys(favoriteKeys)
+            setFavoriteMovieIDs(favoriteMovieIDs)
+        }
+        db2.on('value', getFavorite, error => alert(error));
+        return () => { db2.off('value', getFavorite); };
+    }, [])
+
+    const [toggleFavoritesName, setToggleFavoritesName] = useState((favoriteMovieIDs.includes(movieID)) ? "Remove from Favorites" : "Add to Favorites")
+
+    useEffect(() => (favoriteMovieIDs.includes(movieID)) ? setToggleFavoritesName("Remove from Favorites") : setToggleFavoritesName("Add to Favorites"))
     
+    // Link this up to DB
+    const toggleFavoriteList = () => { 
+        var idToKey = {}
+        favoriteMovieIDs.map((val, i) => idToKey[val] = favoriteKeys[i])
+        if (favoriteMovieIDs.includes(movieID)) { 
+            delete favoriteMovies[idToKey[movieID]]
+            var updates = {[`users/${props.uid}/favorites`]: favoriteMovies}
+            firebase.database().ref().update(updates)
+            setFavoriteMovies(favoriteMovies)
+            const index = favoriteMovieIDs.indexOf(movieID);
+            if (index > -1) {
+                favoriteMovieIDs.splice(index, 1);
+            }
+            setFavoriteMovieIDs(favoriteMovieIDs)
+            setToggleFavoritesName("Add to Favorites")
+        } else {
+            var newPostRef = db2.push();
+            newPostRef.set({
+                "id": movieID
+            });
+            setToggleFavoritesName("Remove from Favorites")
+        }
+    }
+
     const makeInteraction = () => {
         return ( 
             <div>
-                <p><button>Watch on Disney+</button></p>
-                <p><button onClick={addToWatchlist}>Add to Watchlist</button></p>
-                <p><button>Add to Favorites</button></p>
+                <p><button onClick={toggleWatchHistory}>Watch on Disney+</button></p>
+                <p><button onClick={toggleWatchList}>{toggleFutureName}</button></p>
+                <p><button onClick={toggleFavoriteList}>{toggleFavoritesName}</button></p>
             </div>
         )
     }
@@ -86,7 +198,6 @@ const Poster = (props) => {
     return (
         <header className="App-header">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
-            <Navbar></Navbar>
             <Grid>
                 {sizes.map((s, i) => {
                     count++; 
