@@ -23,6 +23,10 @@ const useStyles = makeStyles((theme) => ({
   card: {
     border: "1px solid lightgrey",
   },
+  pagination: {
+    alignSelf: "center",
+    margin: 10,
+  },
 }));
 
 const Results = ({ results, query, homePage, setHomePage, total }) => {
@@ -38,6 +42,7 @@ const Results = ({ results, query, homePage, setHomePage, total }) => {
   return (
     <Container>
       <Pagination
+        className={classes.pagination}
         count={Math.ceil(total / 10)}
         page={page}
         onChange={handleChange}
