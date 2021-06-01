@@ -21,9 +21,9 @@ const Navbar = () => {
     const classes = useStyles()
 
     return (
-        <div class={classes.navBar}>
+        <div className={classes.navBar}>
           <Link to="/">
-            <i class="fa fa-undo"></i>
+            <i className="fa fa-undo"></i>
           </Link>
         </div>
     );

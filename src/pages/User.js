@@ -8,6 +8,7 @@ import { makeStyles } from "@material-ui/core";
 import firebase from '../firebase/firebase';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import { Link } from 'react-router-dom';
+import AddFriend from './AddFriend'; 
 
 const User = (props) => { 
 
@@ -56,8 +57,8 @@ const User = (props) => {
     useEffect(() => {
         const getFriends = (snapshot) => { 
             var keys = snapshot.val() ? Object.keys(snapshot.val()) : null
-            var friendNames = keys ? keys.map(keys => snapshot.val()[keys].name) : []
-            setFriends(friendNames);
+            var friendNames = keys ? keys.map(keys => snapshot.val()[keys]) : []
+            setFriends(friendNames)
         }
         db2.on('value', getFriends, error => alert(error));
         return () => { db2.off('value', getFriends); };
@@ -113,20 +114,29 @@ const User = (props) => {
             else{
                 return <div>
                         <p style={{marginTop: '20px'}}>Add friends to see them here.</p> 
-                        <Button style={{color: 'white', backgroundColor: '#3f51b5'}}>Add Friends</Button>
+                        <AddFriend personID={personID} />
                       </div>
             }
+        } 
+        if (listType === 'friends'){
+            return ( 
+                <div>
+                <AddFriend personID={personID} />
+                {contents.map(content => <div key={content} className={classes.strip}> <h1>{content}</h1></div>)}
+                </div>
+            )
         }
-        return ( 
+        else{
+            return(
             contents.map(content => { 
                 const title = <b>{content["Title"]}</b>
                 const plot = <p>{content["Plot"]}</p>
                 return (<Link to={`/Poster/${content["imdbID"]}`}>
-                        <div class={classes.strip}>
+                        <div className={classes.strip}>
                             <div style={{float: 'left', width: '90%', display: 'flex', flexDirection: 'row'}}>
-                                <img class={classes.stripImage} src={`${content["Poster"]}`} alt="Movie poster"></img>
-                                <div class={classes.info}>
-                                    <div class={classes.introBar}>
+                                <img className={classes.stripImage} src={`${content["Poster"]}`} alt="Movie poster"></img>
+                                <div className={classes.info}>
+                                    <div className={classes.introBar}>
                                         <p>{title}</p>                              
                                     </div>
                                     {plot}
@@ -137,7 +147,7 @@ const User = (props) => {
                         </div>
                         </Link>)
             })
-        )
+        )}
     } 
 
     const [display, setDisplay] = useState(makeDisplay(favorites, 'favorites'))
@@ -150,12 +160,12 @@ const User = (props) => {
     return (
         <header className="App-header" style={{justifyContent: "flex-start"}}>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
-            <div class={classes.midAlign}>
-                <img class={classes.profilePicture} src="https://picsum.photos/460/360?num=1" alt="Profile Picture"></img>
+            <div className={classes.midAlign}>
+                <img className={classes.profilePicture} src="https://picsum.photos/460/360?num=1" alt="Profile Picture"></img>
                 <div> 
-                    <button class={classes.slightSpread} onClick={setDisplayFavorites}>Favorites</button>
-                    <button class={classes.slightSpread} onClick={setDisplayFuture}>Watchlist</button>
-                    <button class={classes.slightSpread} onClick={setDisplayFriends}>Friends</button>
+                    <button className={classes.slightSpread} onClick={setDisplayFavorites}>Favorites</button>
+                    <button className={classes.slightSpread} onClick={setDisplayFuture}>Watchlist</button>
+                    <button className={classes.slightSpread} onClick={setDisplayFriends}>Friends</button>
                 </div>
                 <div> 
                     {display}
