@@ -11,7 +11,7 @@ if (env != null) {
   baseURL = `https://www.omdbapi.com/?apikey=44910e56`;
 }
 
-function Home() {
+const Home = () => {
   const [query, setQuery] = useState("");
   const [year, setYear] = useState("ALL");
   const [type, setType] = useState("ALL");

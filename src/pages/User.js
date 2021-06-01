@@ -1,22 +1,25 @@
 import { Image } from 'semantic-ui-react'
 import React, { useEffect, useState } from "react";
+import { Button } from "@material-ui/core/";
 import env from "react-dotenv";
 import 'semantic-ui-css/semantic.min.css';
 import { useParams } from 'react-router-dom'
 import { makeStyles } from "@material-ui/core"; 
 import firebase from '../firebase/firebase';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
-import { PinDropSharp } from '@material-ui/icons';
+import { Link } from 'react-router-dom';
 
 const User = (props) => { 
 
     let {personID} = useParams();
 
     const db = firebase.database().ref(`users/${personID}/watchList`);
-    const db1 = firebase.database().ref(`users/${personID}/watchHistory`);
+    const db1 = firebase.database().ref(`users/${personID}/favorites`);
+    const db2 = firebase.database().ref(`users/${personID}/friends`)
 
-    const [watched, setWatched] = useState([])
+    const [favorites, setFavorites] = useState([])
     const [future, setFuture] = useState([])
+    const [friends, setFriends] = useState([])
 
     useEffect(() => {
         const getFuture = (snapshot) => { 
@@ -35,7 +38,7 @@ const User = (props) => {
     }, [])
 
     useEffect(() => {
-        const getWatched = (snapshot) => { 
+        const getFavorites = (snapshot) => { 
             var keys = snapshot.val() ? Object.keys(snapshot.val()) : null
             var movies = keys ? keys.map(keys => snapshot.val()[keys].id) : []
             if (movies.length > 0 || movies.length > future.length) {
@@ -43,11 +46,21 @@ const User = (props) => {
                                                             {method: 'GET', mode: 'cors'})
                                                         .then(result => result.json()))
                 Promise.all(promises)                                    
-                    .then((values) => setWatched(values))
+                    .then((values) => setFavorites(values))
             }
         }
-        db1.on('value', getWatched, error => alert(error));
-        return () => { db.off('value', getWatched); };
+        db1.on('value', getFavorites, error => alert(error));
+        return () => { db1.off('value', getFavorites); };
+    }, [])
+    
+    useEffect(() => {
+        const getFriends = (snapshot) => { 
+            var keys = snapshot.val() ? Object.keys(snapshot.val()) : null
+            var friendNames = keys ? keys.map(keys => snapshot.val()[keys].name) : []
+            setFriends(friendNames);
+        }
+        db2.on('value', getFriends, error => alert(error));
+        return () => { db2.off('value', getFriends); };
     }, [])
     
 
@@ -89,32 +102,49 @@ const User = (props) => {
 
     const [classes, setClasses] = useState(useStyles())
     
-    const makeDisplay = (contents) => {
-        if (contents == null) { 
-            return
+    const makeDisplay = (contents, listType) => {
+        if (contents.length == 0) { 
+            if(listType === 'watchList'){
+                return <p style={{marginTop: '20px'}}>Add items to Watchlist to see them here.</p>
+            }
+            else if(listType === 'favorites'){
+                return <p style={{marginTop: '20px'}}>Add items to Favorites to see them here.</p>
+            }
+            else{
+                return <div>
+                        <p style={{marginTop: '20px'}}>Add friends to see them here.</p> 
+                        <Button style={{color: 'white', backgroundColor: '#3f51b5'}}>Add Friends</Button>
+                      </div>
+            }
         }
         return ( 
             contents.map(content => { 
                 const title = <b>{content["Title"]}</b>
                 const plot = <p>{content["Plot"]}</p>
-                return (<div class={classes.strip}>
-                            <div class={classes.info}>
-                                <div class={classes.introBar}>
-                                    <p>{title}</p>                              
-                                    <i class="fa fa-trash-o"></i>
+                return (<Link to={`/Poster/${content["imdbID"]}`}>
+                        <div class={classes.strip}>
+                            <div style={{float: 'left', width: '90%', display: 'flex', flexDirection: 'row'}}>
+                                <img class={classes.stripImage} src={`${content["Poster"]}`} alt="Movie poster"></img>
+                                <div class={classes.info}>
+                                    <div class={classes.introBar}>
+                                        <p>{title}</p>                              
+                                    </div>
+                                    {plot}
                                 </div>
-                                {plot}
                             </div>
-                            <img class={classes.stripImage} src={`${content["Poster"]}`} alt="Movie poster"></img>
-                        </div>)
+                            <div style={{float: 'right', width: '10%'}}>
+                            </div>
+                        </div>
+                        </Link>)
             })
         )
     } 
 
-    const [display, setDisplay] = useState((<p><b>Select an option</b></p>))
+    const [display, setDisplay] = useState(makeDisplay(favorites, 'favorites'))
 
-    const setDisplayWatched = () => setDisplay(makeDisplay(watched));
-    const setDisplayFuture = () => setDisplay(makeDisplay(future))
+    const setDisplayFavorites = () => setDisplay(makeDisplay(favorites, 'favorites'));
+    const setDisplayFuture = () => setDisplay(makeDisplay(future, 'watchList'));
+    const setDisplayFriends = () => setDisplay(makeDisplay(friends, 'friends'));
 
     // Get profile pic image.
     return (
@@ -123,8 +153,9 @@ const User = (props) => {
             <div class={classes.midAlign}>
                 <img class={classes.profilePicture} src="https://picsum.photos/460/360?num=1" alt="Profile Picture"></img>
                 <div> 
-                    <button class={classes.slightSpread} onClick={setDisplayWatched}>Watch History</button>
+                    <button class={classes.slightSpread} onClick={setDisplayFavorites}>Favorites</button>
                     <button class={classes.slightSpread} onClick={setDisplayFuture}>Watchlist</button>
+                    <button class={classes.slightSpread} onClick={setDisplayFriends}>Friends</button>
                 </div>
                 <div> 
                     {display}

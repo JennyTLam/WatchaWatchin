@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStyles } from '@material-ui/core/styles';
-import {Container, TextField, Select, FormControl, InputLabel, MenuItem} from '@material-ui/core/';
+import {Container, TextField, Select, FormControl, InputLabel, MenuItem, Typography} from '@material-ui/core/';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -12,7 +12,12 @@ const useStyles = makeStyles((theme) => ({
   bar: {
     border: '1px solid lightgrey', 
     display: 'flex', 
-    flexDirection: 'row'
+    flexDirection: 'row', 
+    justifyContent: 'center', 
+    width: '90%', 
+    margin: 'auto', 
+    marginTop: 20, 
+    marginBottom: 20
   }
 }));
 

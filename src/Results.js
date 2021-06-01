@@ -3,14 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import MoviePoster from "../src/discover/MoviePoster";
 import {
   Container,
-  TextField,
-  Select,
-  FormControl,
-  InputLabel,
-  MenuItem,
 } from "@material-ui/core/";
-
-import Discover from "./discover/Discover";
 
 const useStyles = makeStyles((theme) => ({
   movieGrid: {

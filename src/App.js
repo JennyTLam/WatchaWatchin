@@ -1,16 +1,20 @@
 import "./App.css";
 import React, {useState, useEffect} from "react";
+import { Switch, Route, Link, useHistory } from 'react-router-dom';
+import { AppBar, Toolbar, IconButton, Typography, Button } from "@material-ui/core/";
+import HomeIcon from '@material-ui/icons/Home';
+import PersonIcon from '@material-ui/icons/Person';
+import ViewListIcon from '@material-ui/icons/ViewList';
+import { makeStyles } from '@material-ui/core/styles';
+import firebase from './firebase/firebase';
+import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
+
 import Home from './pages/Home';
 import Poster from './pages/Poster'
 import User from './pages/User'
-import { Switch, Route, Link, useHistory } from 'react-router-dom';
-import { AppBar, Toolbar, IconButton, Typography, Button } from "@material-ui/core/";
-import MenuIcon from '@material-ui/icons/Menu';
-import { makeStyles } from '@material-ui/core/styles';
 
-import firebase from './firebase/firebase';
-import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 const db = firebase.database().ref();
+
 const uiConfig = {
   signInFlow: 'popup',
   signInOptions: [
@@ -20,7 +24,6 @@ const uiConfig = {
     signInSuccessWithAuthResult: () => false
   }
 };
-
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,14 +35,16 @@ const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1,
   },
+  icon:{
+    height: 50
+  }
 }));
 
 
 function App() {
   const classes = useStyles();
-  const [favorites, setFavorites] = useState({});
-  const [emailTouid, setEmailTouid] = useState({}); 
   const [user, setUser] = useState(null);
+  const history = useHistory();
 
   useEffect(() => {
     const handleData = snap => {
@@ -49,21 +54,10 @@ function App() {
           let re = /\./gi;
           let email = user.email.replace(re, ',')
           db.child('emailTouid/' + email).set(user.uid);
-          setEmailTouid(snap.val().emailTouid);
           if (!snap.val().users[user.uid]) {
             db.child("users").child(user.uid).child("name").set(user.displayName);
           }
-          if (snap.val().users[user.uid] && snap.val().users[user.uid].favorites) {
-            let favorites_arr = snap.val().users[user.uid].favorites;
-            setFavorites(Object.values(favorites_arr));
-          }
-          else {
-            setFavorites({});
-          }
         }
-      } else {
-        setFavorites({});
-        setEmailTouid({});
       }
     };
     db.on('value', handleData, error => alert(error));
@@ -90,27 +84,22 @@ function App() {
     )
   };
 
-  const history = useHistory();
-
-  const NavBar = () => {
-    return (
-      <React.Fragment>
-        { user ? <Welcome user={user}/> : <SignIn /> }
-      </React.Fragment>
-    )};
-
   const Welcome = ({ user }) => {
     return(
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
-            <span onClick={() => history.push("/")} style={{marginRight: 5 + "px"}}>
-              Welcome,
-            </span> 
-            <span onClick={() => history.push(`/Profile/${user.uid}`)}> 
-              {user.displayName} 
-            </span>
+              Welcome, {user.displayName} 
           </Typography>
+          <span onClick={() => history.push("/")}>
+            <Button style={{fontSize: 50, color: 'white'}}><HomeIcon /></Button>
+          </span>
+          <span onClick={() => history.push("/")}>
+            <Button style={{fontSize: 50, color: 'white'}}><ViewListIcon /></Button>
+          </span>
+          <span onClick={() => history.push(`/Profile/${user.uid}`)}> 
+            <Button style={{fontSize: 50, color: 'white'}}><PersonIcon /></Button>
+          </span>
           <Button onClick={() => firebase.auth().signOut()}>
             Log out
           </Button>    
@@ -118,6 +107,13 @@ function App() {
       </AppBar>
     );
   };
+
+  const NavBar = () => {
+    return (
+      <React.Fragment>
+        { user ? <Welcome user={user}/> : <SignIn /> }
+      </React.Fragment>
+  )};
 
   return (
     <React.Fragment>

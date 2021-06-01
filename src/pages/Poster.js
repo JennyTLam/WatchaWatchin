@@ -1,12 +1,9 @@
 import { Grid, Image } from 'semantic-ui-react'
 import React, { useEffect, useState } from "react";
-import env from "react-dotenv";
 import 'semantic-ui-css/semantic.min.css';
 import { useParams } from 'react-router-dom'
-import Navbar from './Navbar'
-
 import firebase from '../firebase/firebase';
-import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
+
 
 const Poster = (props) => { 
     const sizes = [4, 8, 4]
@@ -40,14 +37,14 @@ const Poster = (props) => {
         if (content == null) { 
             return
         }
-        const title = <b>{content["Title"]}</b>
+        const title = <b style={{fontSize: 50, marginRight: '5px'}}>{content["Title"]}</b>
         const year = <i>({content["Year"]})</i>
         const runtime = content["Runtime"]
         const languages = content["Language"]
         const plot = <p>{content["Plot"]}</p>
         const awards = <p>{content["Awards"]}</p>
         const ratings = <ul> 
-                            {content["Ratings"] ? content["Ratings"].map(o => <li>{o.Source}: {o.Value}</li>) : null}
+                            {content["Ratings"] ? content["Ratings"].map(o => <li style={{margin: '10px'}}>{o.Source}: {o.Value}</li>) : null}
                         </ul>
         return (
             <div>
@@ -186,7 +183,6 @@ const Poster = (props) => {
     const makeInteraction = () => {
         return ( 
             <div>
-                <p><button onClick={toggleWatchHistory}>Watch on Disney+</button></p>
                 <p><button onClick={toggleWatchList}>{toggleFutureName}</button></p>
                 <p><button onClick={toggleFavoriteList}>{toggleFavoritesName}</button></p>
             </div>
@@ -210,10 +206,6 @@ const Poster = (props) => {
     );
 
 }
-
-  
-
-
 
 export default Poster
 
