@@ -12,6 +12,7 @@ import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import Home from './pages/Home';
 import Poster from './pages/Poster'
 import User from './pages/User'
+import Friend from './pages/Friend'
 
 const db = firebase.database().ref();
 
@@ -72,9 +73,12 @@ function App() {
     return(
       <AppBar position="static">
         <Toolbar>
-          <Typography variant="h6" className={classes.title}>
-            WatchaWatchin
-          </Typography>
+            <Typography variant="h6" className={classes.title}>
+            <Link to={`/`} style={{color: 'white'}}>
+
+              WatchaWatchin
+              </Link>
+            </Typography>
           <StyledFirebaseAuth
             uiConfig={uiConfig}
             firebaseAuth={firebase.auth()}
@@ -100,9 +104,11 @@ function App() {
           <span onClick={() => history.push(`/Profile/${user.uid}`)}> 
             <Button style={{fontSize: 50, color: 'white'}}><PersonIcon /></Button>
           </span>
+          <Link to={`/`}>
           <Button onClick={() => firebase.auth().signOut()}>
             Log out
-          </Button>    
+          </Button>   
+          </Link> 
           </Toolbar>
       </AppBar>
     );
@@ -121,7 +127,8 @@ function App() {
     <Switch> 
       <Route exact path='/' component={Home}></Route>
       <Route path='/Poster/:movieID' component={() => <Poster uid={user ? user.uid : user}></Poster>}></Route>
-      <Route path='/Profile/:personID' component={() => <User></User>}></Route>
+      <Route path='/Profile/:personID' component={() => <User user={user ? user.name : user}></User>}></Route>
+      <Route path='/FriendProfile/:friendID' component={() => <Friend></Friend>}></Route>
     </Switch>
     </React.Fragment>
   );

@@ -44,7 +44,7 @@ const Poster = (props) => {
         const plot = <p>{content["Plot"]}</p>
         const awards = <p>{content["Awards"]}</p>
         const ratings = <ul> 
-                            {content["Ratings"] ? content["Ratings"].map(o => <li style={{margin: '10px'}}>{o.Source}: {o.Value}</li>) : null}
+                            {content["Ratings"] ? content["Ratings"].map(o => <li key={o.Source} style={{margin: '10px'}}>{o.Source}: {o.Value}</li>) : null}
                         </ul>
         return (
             <div>
@@ -183,9 +183,10 @@ const Poster = (props) => {
     const makeInteraction = () => {
         return ( 
             <div>
-                <p><button onClick={toggleWatchList}>{toggleFutureName}</button></p>
-                <p><button onClick={toggleFavoriteList}>{toggleFavoritesName}</button></p>
+                {props.uid ? <p><button onClick={toggleWatchList}>{toggleFutureName}</button></p> : null}
+                {props.uid ? <p><button onClick={toggleFavoriteList}>{toggleFavoritesName}</button></p> : null }
             </div>
+
         )
     }
 

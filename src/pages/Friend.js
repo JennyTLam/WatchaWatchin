@@ -8,33 +8,28 @@ import { makeStyles } from "@material-ui/core";
 import firebase from '../firebase/firebase';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import { Link } from 'react-router-dom';
-import AddFriend from './AddFriend'; 
 
-const User = ({user}) => { 
+const Friend = (props) => { 
 
-    let {personID} = useParams();
+    let {friendID} = useParams();
 
-    const db = firebase.database().ref(`users/${personID}/watchList`);
-    const db1 = firebase.database().ref(`users/${personID}/favorites`);
-    const db2 = firebase.database().ref(`users/${personID}/friends`)
+    const db = firebase.database().ref(`users/${friendID}/watchList`);
+    const db1 = firebase.database().ref(`users/${friendID}/favorites`);
     const db3 = firebase.database().ref('users')
 
     const [favorites, setFavorites] = useState([])
     const [future, setFuture] = useState([])
-    const [friends, setFriends] = useState([])
-    const [friendUIDs, setFriendUIDs] =useState([])
     const [name, setName] = useState(null); 
 
     useEffect(() => {
         const getName = (snapshot) => { 
             if(snapshot.val()){
-                setName(snapshot.val()[personID].name)
+                setName(snapshot.val()[friendID].name)
             }
         }
         db3.on('value', getName, error => alert(error));
         return () => { db.off('value', getName); };
     }, [])
-
 
     useEffect(() => {
         const getFuture = (snapshot) => { 
@@ -68,18 +63,6 @@ const User = ({user}) => {
         return () => { db1.off('value', getFavorites); };
     }, [])
     
-    useEffect(() => {
-        const getFriends = (snapshot) => { 
-            var keys = snapshot.val() ? Object.keys(snapshot.val()) : null
-            setFriendUIDs(keys); 
-            var friendNames = keys ? keys.map(keys => snapshot.val()[keys]) : []
-            setFriends(friendNames)
-        }
-        db2.on('value', getFriends, error => alert(error));
-        return () => { db2.off('value', getFriends); };
-    }, [])
-    
-
     const useStyles = makeStyles({
         introBar: {
             display: "flex",
@@ -123,26 +106,11 @@ const User = ({user}) => {
             if(listType === 'watchList'){
                 return <p style={{marginTop: '20px'}}>Add items to Watchlist to see them here.</p>
             }
-            else if(listType === 'favorites'){
+            else{
                 return <p style={{marginTop: '20px'}}>Add items to Favorites to see them here.</p>
             }
-            else{
-                return <div>
-                        <p style={{marginTop: '20px'}}>Add friends to see them here.</p> 
-                        <AddFriend personID={personID} />
-                      </div>
-            }
         } 
-        if (listType === 'friends'){
-            return ( 
-                <div>
-                <AddFriend personID={personID} />
-                {contents.map(content => <Link to={`/FriendProfile/${friendUIDs[friends.indexOf(content)]}`}><div key={content} className={classes.strip}> <h1>{content}</h1></div></Link>)}
-                </div>
-            )
-        }
-        else{
-            return(
+        return(
             contents.map(content => { 
                 const title = <b>{content["Title"]}</b>
                 const plot = <p>{content["Plot"]}</p>
@@ -162,14 +130,13 @@ const User = ({user}) => {
                         </div>
                         </Link>)
             })
-        )}
+        )
     } 
 
     const [display, setDisplay] = useState(makeDisplay(favorites, 'favorites'))
 
     const setDisplayFavorites = () => setDisplay(makeDisplay(favorites, 'favorites'));
     const setDisplayFuture = () => setDisplay(makeDisplay(future, 'watchList'));
-    const setDisplayFriends = () => setDisplay(makeDisplay(friends, 'friends'));
 
     // Get profile pic image.
     return (
@@ -181,7 +148,6 @@ const User = ({user}) => {
                 <div> 
                     <button className={classes.slightSpread} onClick={setDisplayFavorites}>Favorites</button>
                     <button className={classes.slightSpread} onClick={setDisplayFuture}>Watchlist</button>
-                    <button className={classes.slightSpread} onClick={setDisplayFriends}>Friends</button>
                 </div>
                 <div> 
                     {display}
@@ -192,6 +158,5 @@ const User = ({user}) => {
 
 }
 
-export default User
+export default Friend;
 
-// style="font-size:24px"
