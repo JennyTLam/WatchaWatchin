@@ -10,9 +10,10 @@ import firebase from './firebase/firebase';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
 import Home from './pages/Home';
-import Poster from './pages/Poster'
-import User from './pages/User'
-import Friend from './pages/Friend'
+import Poster from './pages/Poster';
+import User from './pages/User';
+import Friend from './pages/Friend';
+import Feed from './pages/Feed';
 
 const db = firebase.database().ref();
 
@@ -98,7 +99,7 @@ function App() {
           <span onClick={() => history.push("/")}>
             <Button style={{fontSize: 50, color: 'white'}}><HomeIcon /></Button>
           </span>
-          <span onClick={() => history.push("/")}>
+          <span onClick={() => history.push(`/Feed/${user.uid}`)}>
             <Button style={{fontSize: 50, color: 'white'}}><ViewListIcon /></Button>
           </span>
           <span onClick={() => history.push(`/Profile/${user.uid}`)}> 
@@ -129,6 +130,7 @@ function App() {
       <Route path='/Poster/:movieID' component={() => <Poster uid={user ? user.uid : user}></Poster>}></Route>
       <Route path='/Profile/:personID' component={() => <User user={user ? user.name : user}></User>}></Route>
       <Route path='/FriendProfile/:friendID' component={() => <Friend></Friend>}></Route>
+      <Route path='/Feed/:personID' component={() => <Feed></Feed>}></Route>
     </Switch>
     </React.Fragment>
   );
