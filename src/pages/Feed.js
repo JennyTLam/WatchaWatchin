@@ -12,13 +12,19 @@ const Feed = () => {
 
   useEffect(() => {
     const handleData = (snapshot) => {
-        let reviews = []
-        if (snapshot.val()) {
-            let friends = Object.keys(snapshot.val()[personID].friends)
-            friends.forEach(friendUID => Object.values(snapshot.val()[friendUID].reviews).forEach(review => reviews.push(review)))
-            console.log(reviews)
-            setFeed(reviews)
-        }
+      let reviews = [];
+      if (snapshot.val()) {
+        let friends = Object.keys(snapshot.val()[personID].friends);
+        Object.values(snapshot.val()[personID].reviews).forEach((review) =>
+          reviews.push(review)
+        );
+        friends.forEach((friendUID) =>
+          Object.values(snapshot.val()[friendUID].reviews).forEach((review) =>
+            reviews.push(review)
+          )
+        );
+        setFeed(reviews);
+      }
     };
     db.on("value", handleData, (error) => alert(error));
     return () => {
@@ -73,8 +79,9 @@ const Feed = () => {
       const title = <b>{content["Title"]}</b>;
       const rating = content["Rating"];
       const comment = <p>{content["Comment"]}</p>;
-      const fullDate = content["Date"].split(" ");
-      const date = fullDate[1] + " " + fullDate[2] + " " + fullDate[3];
+      //   const fullDate = content["Date"].split(" ");
+      //   const date = fullDate[1] + " " + fullDate[2] + " " + fullDate[3];
+      const date = content["Date"];
       return (
         <div className={classes.strip}>
           <div

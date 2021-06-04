@@ -20,6 +20,7 @@ const Poster = (props) => {
   const db = firebase.database().ref(`users/${props.uid}/watchList`);
   const db1 = firebase.database().ref(`users/${props.uid}/watchHistory`);
   const db2 = firebase.database().ref(`users/${props.uid}/favorites`);
+  const dbName = firebase.database().ref(`users/${props.uid}`);
 
   useEffect(() => {
     fetch(`https://www.omdbapi.com/?i=${movieID}&apikey=44910e56`, {
@@ -229,6 +230,19 @@ const Poster = (props) => {
   const [openForm, setOpenForm] = useState(false);
   const [rating, setRating] = useState(0);
   const [comments, setComments] = useState("");
+  const [name, setName] = useState("");
+
+  useEffect(() => {
+    const handleData = (snapshot) => {
+      if (snapshot.val()) {
+        setName(snapshot.val().name);
+      }
+    };
+    dbName.on("value", handleData, (error) => alert(error));
+    return () => {
+      dbName.off("value", handleData);
+    };
+  }, []);
 
   const toggleReviewForm = () => {
     setOpenForm(!openForm);
@@ -237,6 +251,7 @@ const Poster = (props) => {
   const saveReview = () => {
     const dateTime = new Date().toLocaleString();
     const ratingObj = {
+      Name: name,
       Title: content["Title"],
       Poster: content["Poster"],
       Rating: rating,
