@@ -6,86 +6,23 @@ import firebase from "../firebase/firebase";
 const Feed = () => {
   let { personID } = useParams();
 
-  const db1 = firebase.database().ref(`users/${personID}/feed`);
-  const db2 = firebase.database().ref(`users/${personID}/friends`);
-  const dbReviews = firebase.database().ref(`users/${personID}/reviews`);
+  const db = firebase.database().ref(`users`);
 
-  const [myFeed, setMyFeed] = useState([]);
   const [feed, setFeed] = useState([]);
-  const [friends, setFriends] = useState([]);
 
   useEffect(() => {
-    const getMyFeed = (snapshot) => {
-      if (snapshot.val()) {
-        var keys = Object.keys(snapshot.val());
-        setMyFeed(keys.map((keys) => snapshot.val()[keys]));
-      }
+    const handleData = (snapshot) => {
+        let reviews = []
+        if (snapshot.val()) {
+            let friends = Object.keys(snapshot.val()[personID].friends)
+            friends.forEach(friendUID => Object.values(snapshot.val()[friendUID].reviews).forEach(review => reviews.push(review)))
+            console.log(reviews)
+            setFeed(reviews)
+        }
     };
-    db1.on("value", getMyFeed, (error) => alert(error));
+    db.on("value", handleData, (error) => alert(error));
     return () => {
-      db1.off("value", getMyFeed);
-    };
-  }, []);
-
-  useEffect(() => {
-    const getFriends = (snapshot) => {
-      if (snapshot.val()) {
-        var keys = Object.keys(snapshot.val());
-        var friends = keys.map((keys) => snapshot.val()[keys]);
-        setFriends(friends);
-      }
-    };
-    db2.on("value", getFriends, (error) => alert(error));
-    return () => {
-      db2.off("value", getFriends);
-    };
-  }, []);
-
-  useEffect(() => {
-    var tempFeed = [];
-    const getFriendFeed = (snapshot) => {
-      if (snapshot.val()) {
-        var keys = Object.keys(snapshot.val());
-        tempFeed.concat(keys.map((keys) => snapshot.val()[keys]));
-      }
-    };
-    var friendDB = [];
-    friends.forEach((friend) => {
-      const tempDB = firebase.database().ref(`users/${friend}/feed`);
-      friendDB.push(tempDB);
-      tempDB.on("value", getFriendFeed, (error) => alert(error));
-    });
-    myFeed.concat(tempFeed);
-    myFeed.sort((a, b) => b["Date"].date - a["Date"].date);
-    // setFeed(myFeed)
-
-    // There's a Date.parse() functions
-
-    // Comment out during production
-    setFeed([
-      {
-        Name: "Marc",
-        Title: "Star Wars: Episode IV - A New Hope",
-        Rating: "4",
-        Comment:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        Date: Date(1995, 11, 17),
-        Poster:
-          "https://m.media-amazon.com/images/M/MV5BNzVlY2MwMjktM2E4OS00Y2Y3LWE3ZjctYzhkZGM3YzA1ZWM2XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg",
-      },
-      {
-        Name: "Jenny",
-        Title: "Star Wars: Episode V - The Empire Strikes Back",
-        Rating: "5",
-        Comment:
-          "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-        Date: Date(2001, 6, 1),
-        Poster:
-          "https://m.media-amazon.com/images/M/MV5BYmU1NDRjNDgtMzhiMi00NjZmLTg5NGItZDNiZjU5NTU4OTE0XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg",
-      },
-    ]);
-    return () => {
-      friendDB.forEach((db) => db.off("value", getFriendFeed));
+      db.off("value", handleData);
     };
   }, []);
 

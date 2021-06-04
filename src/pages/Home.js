@@ -8,7 +8,7 @@ import Discover from "../discover/Discover";
 
 var baseURL = "";
 if (env != null) {
-  baseURL = `http://www.omdbapi.com/?apikey=${env.API_KEY}`;
+  baseURL = `https://www.omdbapi.com/?apikey=44910e56`;
 }
 
 const Home = () => {

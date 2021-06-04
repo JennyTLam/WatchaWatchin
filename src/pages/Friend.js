@@ -36,7 +36,7 @@ const Friend = (props) => {
             var keys = snapshot.val() ? Object.keys(snapshot.val()) : null
             var movies = keys ? keys.map(keys => snapshot.val()[keys].id) : []
             if (movies.length > 0 || movies.length > future.length) {
-                var promises = movies.map(movieID => fetch(`http://www.omdbapi.com/?i=${movieID}&apikey=c77aad00`, 
+                var promises = movies.map(movieID => fetch(`https://www.omdbapi.com/?i=${movieID}&apikey=c77aad00`, 
                                                             {method: 'GET', mode: 'cors'})
                                                         .then(result => result.json()))
                 Promise.all(promises)                                    
@@ -52,7 +52,7 @@ const Friend = (props) => {
             var keys = snapshot.val() ? Object.keys(snapshot.val()) : null
             var movies = keys ? keys.map(keys => snapshot.val()[keys].id) : []
             if (movies.length > 0 || movies.length > future.length) {
-                var promises = movies.map(movieID => fetch(`http://www.omdbapi.com/?i=${movieID}&apikey=c77aad00`, 
+                var promises = movies.map(movieID => fetch(`https://www.omdbapi.com/?i=${movieID}&apikey=c77aad00`, 
                                                             {method: 'GET', mode: 'cors'})
                                                         .then(result => result.json()))
                 Promise.all(promises)                                    
