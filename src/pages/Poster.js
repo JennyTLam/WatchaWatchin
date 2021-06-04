@@ -236,15 +236,14 @@ const Poster = (props) => {
 
   const saveReview = () => {
     const dateTime = new Date().toLocaleString().replace(/\\|\//g, "-");
-    console.log(dateTime);
     const ratingObj = {
       [dateTime]: {
-        movie: movieID,
-        rating: rating,
-        comments: comments,
+        Title: content["Title"],
+        Poster: content["Poster"],
+        Rating: rating,
+        Comment: comments,
       },
     };
-    console.log(ratingObj);
     firebase.database().ref(`users/${props.uid}/reviews`).update(ratingObj);
     setOpenForm(false);
     setRating(0);
