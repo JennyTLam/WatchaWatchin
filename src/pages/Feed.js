@@ -22,9 +22,12 @@ const Feed = () => {
           );
           }
           friends.forEach((friendUID) =>
-            Object.values(snapshot.val()[friendUID].reviews).forEach((review) =>
-              reviews.push(review)
-            )
+          {
+            if(snapshot.val()[friendUID].reviews){
+              Object.values(snapshot.val()[friendUID].reviews).forEach((review) =>
+              reviews.push(review))
+            }
+          }
           );
           setFeed(reviews);
         }
