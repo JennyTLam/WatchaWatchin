@@ -14,16 +14,20 @@ const Feed = () => {
     const handleData = (snapshot) => {
       let reviews = [];
       if (snapshot.val()) {
-        let friends = Object.keys(snapshot.val()[personID].friends);
-        Object.values(snapshot.val()[personID].reviews).forEach((review) =>
-          reviews.push(review)
-        );
-        friends.forEach((friendUID) =>
-          Object.values(snapshot.val()[friendUID].reviews).forEach((review) =>
+        if(snapshot.val()[personID].friends){
+          let friends = Object.keys(snapshot.val()[personID].friends);
+          if(snapshot.val()[personID].reviews){
+            Object.values(snapshot.val()[personID].reviews).forEach((review) =>
             reviews.push(review)
-          )
-        );
-        setFeed(reviews);
+          );
+          }
+          friends.forEach((friendUID) =>
+            Object.values(snapshot.val()[friendUID].reviews).forEach((review) =>
+              reviews.push(review)
+            )
+          );
+          setFeed(reviews);
+        }
       }
     };
     db.on("value", handleData, (error) => alert(error));
@@ -83,7 +87,7 @@ const Feed = () => {
       //   const date = fullDate[1] + " " + fullDate[2] + " " + fullDate[3];
       const date = content["Date"];
       return (
-        <div className={classes.strip}>
+        <div key={content["Date"]} className={classes.strip}>
           <div
             style={{
               float: "left",

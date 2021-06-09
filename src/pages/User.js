@@ -147,7 +147,7 @@ const User = ({user}) => {
                 const title = <b>{content["Title"]}</b>
                 const plot = <p>{content["Plot"]}</p>
                 return (<Link to={`/Poster/${content["imdbID"]}`}>
-                        <div className={classes.strip}>
+                        <div key={content["imdbID"]} className={classes.strip}>
                             <div style={{float: 'left', width: '90%', display: 'flex', flexDirection: 'row'}}>
                                 <img className={classes.stripImage} src={`${content["Poster"]}`} alt="Movie poster"></img>
                                 <div className={classes.info}>
